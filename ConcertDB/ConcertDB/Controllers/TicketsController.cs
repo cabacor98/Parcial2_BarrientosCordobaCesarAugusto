@@ -24,30 +24,42 @@ namespace ConcertDB.Controllers
             return View();
         }
 
+        public class ResponseDto
+        {
+            public bool Success { get; set; }
+            public string Message { get; set; }
+        }
+
         public IActionResult ValidateTicket(int id, string entranceGate)
         {
-            var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
+            var ticket = _context.Tickets.Find(id);
 
-            if (ticket == null)
-            {
-                // Mostrar ventana de notificación de error
-                return Content($"<script type='text/javascript'>Swal.fire('Error', 'Boleta no encontrada.', 'error').then(() => window.history.back());</script>");
-            }
-            else if ((bool)ticket.IsUsed)
-            {
-                // Mostrar ventana de notificación de error
-                return Content($"<script type='text/javascript'>Swal.fire('Error', 'Esta boleta ya fue usada el {ticket.UseDate.Value.ToString("dd/MM/yyyy HH:mm:ss")} en la portería {ticket.EntranceGate}.', 'error').then(() => window.history.back());</script>");
-            }
-            else
-            {
-                ticket.IsUsed = true;
-                ticket.UseDate = DateTime.Now;
-                ticket.EntranceGate = entranceGate;
-                _context.SaveChanges();
 
-                // Mostrar ventana de notificación de éxito
-                return Content($"<script type='text/javascript'>Swal.fire('Éxito', 'Boleta validada exitosamente.', 'success').then(() => window.history.back());</script>");
+            var response = new ResponseDto();
+
+            switch (ticket)
+            {
+                case null:
+                    response.Success = false;
+                    response.Message = "Boleta no encontrada.";
+                    break;
+
+                case { IsUsed: true }:
+                    response.Success = false;
+                    response.Message = $"Esta boleta ya fue usada el {ticket.UseDate.Value.ToString("dd/MM/yyyy HH:mm:ss")} en la portería {ticket.EntranceGate}.";
+                    break;
+
+                default:
+                    ticket.IsUsed = true;
+                    ticket.UseDate = DateTime.Now;
+                    ticket.EntranceGate = entranceGate;
+                    _context.SaveChanges();
+                    response.Success = true;
+                    response.Message = "Boleta validada exitosamente.";
+                    break;
             }
+
+            return Json(response);
         }
 
     }

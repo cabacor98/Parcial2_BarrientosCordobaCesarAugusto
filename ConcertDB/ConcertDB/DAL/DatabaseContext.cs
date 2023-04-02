@@ -14,7 +14,7 @@ namespace ConcertDB.DAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Ticket>().HasIndex(t => t.Id).IsUnique();
+            modelBuilder.Entity<Ticket>().HasData(Enumerable.Range(1, 50000).Select(x => new Ticket { Id = x, UseDate = null, IsUsed = false, EntranceGate = null }).ToArray());
         }
     }
 }

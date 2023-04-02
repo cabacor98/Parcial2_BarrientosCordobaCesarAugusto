@@ -1,47 +1,55 @@
 ﻿@model IEnumerable<ConcertDB.DAL.Entities.Ticket>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Validar Boleta";
 }
 
-<h1>Tickets</h1>
+<h1>@ViewData["Title"]</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UseDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsUsed)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EntraceGate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UseDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsUsed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EntraceGate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<form asp-action="ValidateTicket">
+    <div class="form-group">
+        <label>ID de la boleta:</label>
+        <input type="text" class="form-control" name="ticketId" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Validar</button>
+</form>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Message
+    </div>
 }
-    </tbody>
-</table>
+
+@if (Model != null)
+{
+    <h2>Boleta válida</h2>
+
+    <form asp-action="UseTicket">
+        <div class="form-group">
+            <label>Portería de ingreso:</label>
+            <select class="form-control" name="entranceGate" required>
+                <option value="">-- Seleccionar --</option>
+                <option value="Norte">Norte</option>
+                <option value="Sur">Sur</option>
+                <option value="Oriental">Oriental</option>
+                <option value="Occidental">Occidental</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Usar Boleta</button>
+    </form>
+
+    <p>ID de la boleta: @Model.FirstOrDefault().Id</p>
+
+    @if ((bool)Model.FirstOrDefault().IsUsed)
+    {
+        <p>Boleta usada a las @Model.FirstOrDefault().UseDate por la portería @Model.FirstOrDefault().EntranceGate</p>
+    }
+    else
+    {
+        <p>Boleta no usada</p>
+    }
+}
+

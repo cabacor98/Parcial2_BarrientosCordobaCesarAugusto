@@ -5,15 +5,18 @@ namespace ConcertDB.DAL.Entities
     public class Ticket
     {
         [Key]
-        [Display(Name ="Ticket Number")]
+        [Display(Name ="Numero de ticket")]
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
+        [Display(Name = "Fecha concierto")]
         public DateTime? UseDate { get; set; }
 
+        [Display(Name = "Usada")]
         public bool? IsUsed { get; set; }
 
-        public string? EntraceGate { get; set; }
+        [Display(Name = "Puerta de entrada")]
+        public string? EntranceGate { get; set; }
 
     }
 }

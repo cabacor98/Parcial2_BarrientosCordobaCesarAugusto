@@ -19,7 +19,7 @@ namespace ConcertDB.Controllers
             _context = context;
         }
 
-        public ActionResult ValidateTicket()
+        public ActionResult Index()
         {
             return View();
         }
@@ -30,11 +30,13 @@ namespace ConcertDB.Controllers
 
             if (ticket == null)
             {
-                return Json(new { success = false, message = "Boleta no válida" });
+                // Mostrar ventana de notificación de error
+                return Content($"<script type='text/javascript'>Swal.fire('Error', 'Boleta no encontrada.', 'error').then(() => window.history.back());</script>");
             }
             else if ((bool)ticket.IsUsed)
             {
-                return Json(new { success = false, message = $"Esta boleta ya fue usada el {ticket.UseDate.Value.ToString("dd/MM/yyyy HH:mm:ss")} por la portería {ticket.EntranceGate}" });
+                // Mostrar ventana de notificación de error
+                return Content($"<script type='text/javascript'>Swal.fire('Error', 'Esta boleta ya fue usada el {ticket.UseDate.Value.ToString("dd/MM/yyyy HH:mm:ss")} en la portería {ticket.EntranceGate}.', 'error').then(() => window.history.back());</script>");
             }
             else
             {
@@ -43,9 +45,10 @@ namespace ConcertDB.Controllers
                 ticket.EntranceGate = entranceGate;
                 _context.SaveChanges();
 
-                return Json(new { success = true, message = "Boleta válida" });
+                // Mostrar ventana de notificación de éxito
+                return Content($"<script type='text/javascript'>Swal.fire('Éxito', 'Boleta validada exitosamente.', 'success').then(() => window.history.back());</script>");
             }
         }
-    }
 
+    }
 }

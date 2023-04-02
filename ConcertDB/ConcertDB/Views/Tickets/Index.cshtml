@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<ConcertDB.DAL.Entities.Ticket>
 
 @{
-    ViewData["Title"] = "Validar Boleta";
+    ViewData["Title"] = "Index";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>Validar Boleta</h1>
 
 <form asp-action="ValidateTicket">
     <div class="form-group">
@@ -17,39 +17,41 @@
 
 @if (ViewBag.Message != null)
 {
-    <div class="alert alert-danger" role="alert">
-        @ViewBag.Message
-    </div>
+    <script>
+        window.alert("@ViewBag.Message");
+    </script>
 }
 
 @if (Model != null)
 {
-    <h2>Boleta válida</h2>
-
-    <form asp-action="UseTicket">
-        <div class="form-group">
-            <label>Portería de ingreso:</label>
-            <select class="form-control" name="entranceGate" required>
-                <option value="">-- Seleccionar --</option>
-                <option value="Norte">Norte</option>
-                <option value="Sur">Sur</option>
-                <option value="Oriental">Oriental</option>
-                <option value="Occidental">Occidental</option>
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Usar Boleta</button>
-    </form>
-
-    <p>ID de la boleta: @Model.FirstOrDefault().Id</p>
-
-    @if ((bool)Model.FirstOrDefault().IsUsed)
+    @foreach (var ticket in Model)
     {
-        <p>Boleta usada a las @Model.FirstOrDefault().UseDate por la portería @Model.FirstOrDefault().EntranceGate</p>
-    }
-    else
-    {
-        <p>Boleta no usada</p>
+        <h2>Boleta válida</h2>
+
+        <form asp-action="UseTicket">
+            <div class="form-group">
+                <label>Portería de ingreso:</label>
+                <select class="form-control" name="entranceGate" required>
+                    <option value="">-- Seleccionar --</option>
+                    <option value="Norte">Norte</option>
+                    <option value="Sur">Sur</option>
+                    <option value="Oriental">Oriental</option>
+                    <option value="Occidental">Occidental</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Usar Boleta</button>
+        </form>
+
+        <p>ID de la boleta: @ticket.Id</p>
+
+        @if ((bool)ticket.IsUsed)
+        {
+            <p>Boleta usada a las @ticket.UseDate por la portería @ticket.EntranceGate</p>
+        }
+        else
+        {
+            <p>Boleta no usada</p>
+        }
     }
 }
-
